@@ -1,7 +1,7 @@
 services:
   server:
     build:
-      context: ./server
+      context: .
       dockerfile: Dockerfile
     ports:
       - "3000:3000"
@@ -12,7 +12,7 @@ services:
     restart: always
   client:
     build:
-      context: ./client
+      context: .
       dockerfile: Dockerfile
     ports:
       - "8000:8000"
@@ -22,20 +22,17 @@ services:
       - NODE_ENV=development
     restart: always
   db:
-    image: mysql:8.0
-    command: --default-authentication-plugin=mysql_native_password
-    restart: always
+    image: postgres:latest
+    container_name: vue-saas-postgres
     environment:
-      MYSQL_ROOT_PASSWORD: 12345
-      MYSQL_DATABASE: test
-      MYSQL_USER: app
-      MYSQL_PASSWORD: root123
+      POSTGRES_USER: app
+      POSTGRES_PASSWORD: root123
+      POSTGRES_DB: test
     ports:
-      - "3306:3306"
+      - "5432:5432"
     volumes:
-      - mysql_data:/var/lib/mysql
-      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
-      - ./db/my.cnf:/etc/mysql/my.cnf
+      - postgres_data:/var/lib/postgresql/data  # Persist data
+    restart: always
 
 volumes:
-  mysql_data:
+  postgres_data:

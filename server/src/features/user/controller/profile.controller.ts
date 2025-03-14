@@ -1,4 +1,4 @@
-import {User} from "../../../domain/User";
+import {User} from "../../../domain";
 import {NotFoundException, authGuard} from "../../../shared";
 import {controller, httpGet} from "inversify-express-utils";
 import {inject} from "inversify";
@@ -15,7 +15,7 @@ export class ProfileController {
     @httpGet('/', authGuard)
     public async index(req, res) {
         const user_db: any = await this.userRepository.findOne({
-            where: {id: req.user.id},
+            where: {id: req.userId},
         });
 
         if (!user_db) {

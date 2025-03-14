@@ -1,11 +1,8 @@
-import {Column, Entity, PrimaryGeneratedColumn, Repository} from "typeorm";
-import {AppDataSource, BaseModel} from "../shared";
+import {Column, Entity} from "typeorm";
+import {BaseModel} from "../shared";
 
 @Entity()
 export class User extends BaseModel {
-  @PrimaryGeneratedColumn('uuid')
-  id: string
-
   @Column()
   username: string
 
@@ -15,14 +12,12 @@ export class User extends BaseModel {
   @Column()
   password: string
 
-  @Column()
+  @Column({ default: null })
   recoverPassword: string
 
-  @Column()
+  @Column({ default: null })
   lastLoginAt: string
 
-  @Column()
+  @Column({ default: null })
   confirmedAt: string;
 }
-
-export const UserRepository: Repository<User> = AppDataSource.getRepository(User);

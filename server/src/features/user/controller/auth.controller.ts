@@ -5,7 +5,7 @@ import {LOGIN_DTO_SCHEMA} from "../dto/login.dto";
 import {UserService} from "../service/UserService";
 import {inject} from "inversify";
 
-@controller('/profile')
+@controller('/auth')
 export class AuthController {
 
     public constructor(
