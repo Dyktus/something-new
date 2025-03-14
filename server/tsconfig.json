@@ -1,0 +1,32 @@
+{
+  "compilerOptions": {
+    "moduleResolution": "node",
+    "module": "commonjs",
+    "target": "es2017",
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "noImplicitAny": false,
+    "noImplicitThis": false,
+    "noUnusedLocals": true,
+    "noFallthroughCasesInSwitch": true,
+    "strictNullChecks": false,
+    "declaration": true,
+    "lib": [
+      "es2017.object",
+      "es2015",
+      "es2017",
+      "dom"
+    ],
+    "outDir": "./dist",
+    "baseUrl": "./",
+    "types": ["node"],
+    "sourceMap": true,
+    "inlineSources": true,
+    "sourceRoot": "/",
+    "skipLibCheck": true,
+  },
+  "exclude": [
+    "node_modules",
+    "dist/"
+  ]
+}
