@@ -1,54 +1,75 @@
-import { createRouter, createWebHistory } from "vue-router";
-import HomeView from "../views/HomeView.vue";
-import axios from "../axios";
-import { store } from "../store";
+import { createRouter, createWebHashHistory } from 'vue-router'
+import Home from '@/views/HomeView.vue'
+import ProfileView from "@/views/features/user/ProfileView.vue";
+import LoginView from "@/views/features/user/LoginView.vue";
+import RegisterView from "@/views/features/user/RegisterView.vue";
+import LogoutView from "@/views/features/user/LogoutView.vue";
+
+const routes = [
+  {
+    meta: {
+      title: 'Dashboard',
+      requiresAuth: true,
+    },
+    path: '/',
+    name: 'dashboard',
+    component: Home,
+  },
+  {
+    meta: {
+      title: 'My profile',
+      requiresAuth: true,
+    },
+    path: '/profile',
+    name: 'profile',
+    component: ProfileView,
+  },
+  {
+    meta: {
+      title: 'Login',
+      requiresAuth: false,
+    },
+    path: '/login',
+    name: 'login',
+    component: LoginView,
+  },
+  {
+    meta: {
+      title: 'Register',
+      requiresAuth: false,
+    },
+    path: '/register',
+    name: 'register',
+    component: RegisterView,
+  },
+  {
+    meta: {
+      title: 'Logout',
+      requiresAuth: false,
+    },
+    path: '/logout',
+    name: 'logout',
+    component: LogoutView,
+  },
+]
 
 const router = createRouter({
-  history: createWebHistory(import.meta.env.BASE_URL),
-  routes: [
-    {
-      path: "/",
-      name: "home",
-      component: HomeView,
-      meta: { requiresAuth: true },
-    },
-    {
-      path: "/login",
-      name: "login",
-      component: () => import("../views/SignIn.vue"),
-    },
-    {
-      path: "/register",
-      name: "register",
-      component: () => import("../views/SignUp.vue"),
-    },
-  ],
-});
+  history: createWebHashHistory(),
+  routes,
+  scrollBehavior(to, from, savedPosition) {
+    return savedPosition || { top: 0 }
+  },
+})
 
-router.beforeEach(async (to, from) => {
-  try {
-    const authenticated = await is_authenticated();
-    if (to.meta.requiresAuth && !authenticated) {
-      // User is not authenticated, redirect to login
-      return { path: "/login" };
-    }
-    if ((to.path === "/login" || to.path === "/register") && authenticated) {
-      // User is authenticated and trying to access login, redirect to dashboard
-      return { path: "/" };
-    }
-  } catch (err) {
-    alert('server is down');
+router.beforeEach((to, from, next) => {
+  const isAuthenticated = !!localStorage.getItem('apiToken')
+
+  if (to.meta.requiresAuth && !isAuthenticated) {
+    console.log(`You are not logged so I get you out...`)
+    next('/login')
+  } else {
+    next()
   }
-});
+})
 
-async function is_authenticated() {
-  try {
-    const response = await axios.get("profile/");
-    store.updateName(response.data.username);
-    return true;
-  } catch (err) {
-    return false;
-  }
-}
-
-export default router;
+export default router

@@ -1,10 +1,12 @@
 <script setup>
-import { store } from "../store";
-
+import SectionMain from '@/components/SectionMain.vue'
+import LayoutAuthenticated from '@/layouts/LayoutAuthenticated.vue'
 </script>
 
 <template>
-  <main>
-    <h1>Welcome {{ store?.username || 'Comrade' }}</h1>
-  </main>
+  <LayoutAuthenticated>
+    <SectionMain>
+      Tu coś powstaje...
+    </SectionMain>
+  </LayoutAuthenticated>
 </template>

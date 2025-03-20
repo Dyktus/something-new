@@ -10,6 +10,9 @@ export class TeamBilling extends BaseModel {
   teamId: string;
 
   @Column()
+  company_name: string;
+
+  @Column()
   tax_id: string;
 
   @Column()
@@ -20,9 +23,6 @@ export class TeamBilling extends BaseModel {
 
   @Column()
   city: string;
-
-  @Column()
-  region: string;
 
   @Column()
   country: string;

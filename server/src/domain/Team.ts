@@ -1,5 +1,6 @@
 import {BaseModel} from "../shared";
-import {Column, Entity, PrimaryGeneratedColumn} from "typeorm";
+import {Column, Entity, OneToMany, PrimaryGeneratedColumn} from "typeorm";
+import { TeamUser } from "./TeamUser";
 
 @Entity('team')
 export class Team extends BaseModel {
@@ -11,5 +12,8 @@ export class Team extends BaseModel {
 
     @Column({type: 'uuid', unique: true})
     teamOwnerId: string;
+
+    @OneToMany(() => TeamUser, (teamUser) => teamUser.teamId)
+    teamUsers: TeamUser[];
 }
 

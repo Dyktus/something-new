@@ -4,12 +4,14 @@ import * as cors from 'cors';
 import {InversifyExpressServer} from "inversify-express-utils";
 import {Container} from "inversify";
 import "./features/user";
-import {ProfileController, UserService} from "./features/user";
+import {ProfileController, UserService, TeamService, UserRepository, TeamRepository} from "./features/user";
 import "reflect-metadata"
-import {AppDataSource, errorHandler, UserRepository} from "./shared";
-import {User} from "./domain";
-import {Repository} from "typeorm";
-import {AuthController} from "./features/user/controller/auth.controller";
+import {
+    AppDataSource,
+    errorHandler,
+    QueryManager
+} from "./shared";
+import {TeamController} from "./features/user/controller/team.controller";
 
 dotenv.config();
 
@@ -19,14 +21,20 @@ const start = async () => {
     await AppDataSource.initialize();
 
     // Database binding
-    container.bind<Repository<User>>('UserRepository').toConstantValue(UserRepository)
+    const queryManager = new QueryManager();
+    container.bind<QueryManager>(QueryManager).toConstantValue(queryManager);
+
+    // Repositories
+    container.bind<UserRepository>(UserRepository).to(UserRepository);
+    container.bind<TeamRepository>(TeamRepository).to(TeamRepository);
 
     // Services
     container.bind<UserService>('UserService').to(UserService);
+    container.bind<TeamService>('TeamService').to(TeamService);
 
     // Controllers
-    container.bind<AuthController>(AuthController).toSelf();
     container.bind<ProfileController>(ProfileController).toSelf();
+    container.bind<TeamController>(TeamController).toSelf();
 
     let server = new InversifyExpressServer(container);
     server.setConfig((app) => {

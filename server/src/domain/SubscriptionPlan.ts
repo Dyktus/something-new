@@ -13,6 +13,12 @@ export class SubscriptionPlan  extends BaseModel {
   @Column()
   subscriptionName: string;
 
+  @Column()
+  currency: string;
+
+  @Column({ default: true })
+  status: boolean;
+
   @Column('decimal', { precision: 10, scale: 2 })
   pricePerYear: number;
 

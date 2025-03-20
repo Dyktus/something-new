@@ -8,4 +8,16 @@ export class TeamSubscription extends BaseModel {
 
   @Column({ type: 'uuid' })
   subscriptionId: string;
+
+  @Column({ default: true })
+  status: boolean;
+
+  @Column()
+  start_date: Date;
+
+  @Column()
+  end_date: Date;
+
+  @Column({ default: true })
+  renewal: boolean;
 }
