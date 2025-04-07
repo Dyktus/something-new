@@ -1,6 +1,6 @@
 import {inject, injectable} from "inversify";
 import {User} from "../../../domain";
-import {UnauthorizedException} from "../../../shared";
+import {NotFoundException, UnauthorizedException} from "../../../shared";
 import * as bcrypt from 'bcryptjs';
 import * as jwt from 'jsonwebtoken';
 import {RegisterDto} from "../dto/register.dto";
@@ -39,12 +39,30 @@ export class UserService {
         );
     }
 
-    public async registerUser(dto: RegisterDto): Promise<User> {
+    public hashPassword(password: string): string {
         const salt = bcrypt.genSaltSync();
-        const hashedPassword = bcrypt.hashSync(dto.password, salt)
+        return bcrypt.hashSync(password, salt)
+    }
 
+    public async validateUserExists(userId: string): Promise<User> {
+        const user_db: User | null = await this.userRepository.findById(userId);
+
+        if (!user_db) {
+            throw new NotFoundException("User not found.");
+        }
+
+        return user_db;
+    }
+
+    public async updateUserPassword(user: User, newPassword: string): Promise<void> {
+       
+        user.password = this.hashPassword(newPassword);
+        await user.save();
+    }
+
+    public async registerUser(dto: RegisterDto): Promise<User> {
         return await this.userRepository.create(
-            dto.email, hashedPassword
+            dto.email, this.hashPassword(dto.password)
         );
     }
 }

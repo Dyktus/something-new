@@ -10,6 +10,11 @@ export class TeamRepository {
     ) {
     }
 
+    public async changeOwnership(team: Team, owner: User): Promise<void> {
+        team.teamOwnerId = owner.id;
+        await team.save();
+    }
+
     public async findById(teamId: string): Promise<Team> {
         const team: Team = await this.queryManager
             .getManager()
@@ -34,38 +39,68 @@ export class TeamRepository {
         const check = await this.queryManager
             .getManager()
             .getRepository(TeamUser)
-            .findOne({where: {userId: user.id, teamId: team.id}});
+            .findOne({where: {user: {id: user.id}, team: {id: team.id}}});
 
         if (check) {
             throw new Error(`User ${user.id} already assigned to team ${team.id}`);
         }
 
-        if (assigningUser.id !== team.teamOwnerId) {
-            throw new Error(`You cannot perform actions on ${team.id} as you are not the owner of the team.`);
-        }
-
         return TeamUser.create({
-            teamId: team.id,
-            userId: user.id,
+            team: {id: team.id},
+            user: {id: user.id},
             lastActionUser: assigningUser.id
         }).save();
     }
 
     public async findUserTeams(user: User): Promise<Team[]> {
-        const teams = await this.queryManager
+        return await this.queryManager
             .getManager()
             .getRepository(Team)
             .find({
                 where: {
                     teamUsers: {
-                        userId: user.id,
+                        user: {id: user.id},
                     },
                 },
                 relations: ['teamUsers'],
             });
+    }
+
+    public async findTeamUsers(teamId: string): Promise<User[]> {
+        const users: User[] = await this.queryManager
+            .getManager()
+            .getRepository(User)
+            .createQueryBuilder('user')
+            .innerJoin('user.teamUsers', 'teamUser')
+            .where('teamUser.teamId = :teamId', {teamId})
+            .where('teamUser.deletedAt IS NULL')
+            .getMany();
+
+        return users;
+    }
+
+    public async findTeamUser(teamId: string, userId: string): Promise<TeamUser> {
+        const teamUser: TeamUser = await this.queryManager
+            .getManager()
+            .getRepository(TeamUser)
+            .findOne({
+                where: {
+                    user: {id: userId},
+                    team: {id: teamId}
+                }
+            });
 
         await this.queryManager.release();
 
-        return teams;
+        return teamUser;
+    }
+
+    public async removeTeamUser(
+        teamUser: TeamUser,
+        actionUserId: string
+    ): Promise<void> {
+        teamUser.deletedAt = new Date();
+        teamUser.lastActionUser = actionUserId;
+        await teamUser.save();
     }
 }

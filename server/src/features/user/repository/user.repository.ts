@@ -45,5 +45,15 @@ export class UserRepository {
         return await this.queryManager.getManager().save(user);
     }
 
+    public async update(userId: string, partialUser: Partial<User>): Promise<boolean> {
+        await this.queryManager.getManager()
+            .getRepository(User)
+            .update({
+                where: {
+                    id: userId,
+                }
+            }, partialUser)
+    }
+
 
 }

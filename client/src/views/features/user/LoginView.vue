@@ -25,13 +25,13 @@ const mainStore = useMainStore()
 const submit = async () => {
 
   try {
-    const response = await api.post('/auth/login', {
+    const response = await api.post('/profile/login', {
       email: form.email,
       password: form.password,
     });
 
     await mainStore.setUser(response);
-    api.setToken(response.token);
+    api.setToken(response.data.token);
     router.push('/')
 
     console.log('all done');

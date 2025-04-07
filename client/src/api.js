@@ -13,7 +13,7 @@ const apiClient = axios.create({
 apiClient.interceptors.request.use((config) => {
   const token = localStorage.getItem(apiTokenLocalStorage)
   if (token) {
-    config.headers.Authorization = `Bearer ${token}`
+    config.headers['x-token'] = `Bearer ${token}`
   }
   return config
 }, (error) => Promise.reject(error))
@@ -39,6 +39,9 @@ export default {
   },
   put(url, data) {
     return apiClient.put(url, data).then((res) => res.data)
+  },
+  patch(url, data) {
+    return apiClient.patch(url, data).then((res) => res.data)
   },
   delete(url) {
     return apiClient.delete(url).then((res) => res.data)

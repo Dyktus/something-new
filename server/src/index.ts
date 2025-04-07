@@ -12,6 +12,7 @@ import {
     QueryManager
 } from "./shared";
 import {TeamController} from "./features/user/controller/team.controller";
+import {SubscriptionRepository} from "./features/user/repository/subscription.repository";
 
 dotenv.config();
 
@@ -27,10 +28,11 @@ const start = async () => {
     // Repositories
     container.bind<UserRepository>(UserRepository).to(UserRepository);
     container.bind<TeamRepository>(TeamRepository).to(TeamRepository);
+    container.bind<SubscriptionRepository>(SubscriptionRepository).to(SubscriptionRepository);
 
     // Services
-    container.bind<UserService>('UserService').to(UserService);
-    container.bind<TeamService>('TeamService').to(TeamService);
+    container.bind<UserService>(UserService).to(UserService);
+    container.bind<TeamService>(TeamService).to(TeamService);
 
     // Controllers
     container.bind<ProfileController>(ProfileController).toSelf();

@@ -10,6 +10,7 @@ services:
     environment:
       - NODE_ENV=development
     restart: always
+
   client:
     build:
       context: .
@@ -21,6 +22,7 @@ services:
     environment:
       - NODE_ENV=development
     restart: always
+
   db:
     image: postgres:latest
     container_name: vue-saas-postgres
@@ -34,5 +36,20 @@ services:
       - postgres_data:/var/lib/postgresql/data  # Persist data
     restart: always
 
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: admin
+      RABBITMQ_DEFAULT_PASS: admin
+      RABBITMQ_LOAD_DEFINITIONS: /etc/rabbitmq/definitions.json
+    volumes:
+      - rabbitmq-data:/var/lib/rabbitmq
+      - ./rabbit-mq/definitions.json:/etc/rabbitmq/definitions.json:ro
+
 volumes:
   postgres_data:
+  rabbitmq-data:

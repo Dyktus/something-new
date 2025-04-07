@@ -1,7 +1,7 @@
 import * as jwt from 'jsonwebtoken';
 
 export const authGuard = async (req, res, next) => {
-    const auth_header = req.headers["authorization"];
+    const auth_header = req.headers["x-token"];
     if (auth_header) {
         const token = auth_header.split(" ")[1];
         jwt.verify(token, process.env.JWT_SECRET_KEY, (err, decoded) => {

@@ -4,6 +4,7 @@ import ProfileView from "@/views/features/user/ProfileView.vue";
 import LoginView from "@/views/features/user/LoginView.vue";
 import RegisterView from "@/views/features/user/RegisterView.vue";
 import LogoutView from "@/views/features/user/LogoutView.vue";
+import TeamView from "@/views/features/team/TeamView.vue";
 
 const routes = [
   {
@@ -23,6 +24,15 @@ const routes = [
     path: '/profile',
     name: 'profile',
     component: ProfileView,
+  },
+  {
+    meta: {
+      title: 'My team',
+      requiresAuth: true,
+    },
+    path: '/team/:id',
+    name: 'team',
+    component: TeamView,
   },
   {
     meta: {

@@ -13,7 +13,7 @@ export class Team extends BaseModel {
     @Column({type: 'uuid', unique: true})
     teamOwnerId: string;
 
-    @OneToMany(() => TeamUser, (teamUser) => teamUser.teamId)
+    @OneToMany(() => TeamUser, (teamUser) => teamUser.team)
     teamUsers: TeamUser[];
 }
 

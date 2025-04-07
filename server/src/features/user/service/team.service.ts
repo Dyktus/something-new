@@ -2,15 +2,24 @@ import {inject, injectable} from "inversify";
 import {RegisterDto} from "../dto/register.dto";
 import {User, Team, TeamBilling, TeamSubscription, TeamUser} from "../../../domain";
 import {QueryManager} from "../../../shared/database/QueryManager";
+import {TeamRepository} from "../repository/team.repository";
 
 @injectable()
 export class TeamService {
 
     public constructor(
-        @inject(QueryManager) private queryManager: QueryManager
+        @inject(QueryManager) private queryManager: QueryManager,
+        @inject(TeamRepository)
+        private readonly teamRepository: TeamRepository,
     ) {
     }
 
+    public userIsInTeam(users: User[], user: User): boolean {
+        return users.filter((u) => u.id === user.id).length > 0;
+    }
+    public isTeamOwner(team: Team, user: User): boolean {
+        return team.teamOwnerId === user.id;
+    }
     public async createTeam(
         dto: RegisterDto,
         user: User
@@ -47,14 +56,31 @@ export class TeamService {
         await this.queryManager.getManager().save(teamSubscription);
 
         // Assign user to the team
-        const teamUser = this.queryManager.getManager().getRepository(TeamUser).create({
-            teamId: team.id,
-            userId: team.teamOwnerId
+        const teamUser = this.queryManager.getManager()
+            .getRepository(TeamUser).create({
+            team: { id: team.id },
+            user: { id: team.teamOwnerId }
         });
 
         await this.queryManager.getManager().save(teamUser);
 
         return team;
+    }
+
+    public async currentUserTeams(user: User): Promise<{ownTeamId: string, teams: Array<{id: string, name: string}>}> {
+        const teams: Team[] = await this.teamRepository.findUserTeams(user);
+
+        const ownTeamId = teams.length > 0 ? teams.filter(team => team.teamOwnerId === user.id)[0].id : null;
+
+        return {
+            ownTeamId,
+            teams: teams.map((team) => {
+                return {
+                    id: team.id,
+                    name: team.teamName,
+                };
+            }),
+        }
     }
 
 

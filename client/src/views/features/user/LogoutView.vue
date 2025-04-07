@@ -7,7 +7,7 @@ const router = useRouter()
 
 api.removeToken();
 
-router.push('/dashboard')
+router.push('/login')
 
 </script>
 

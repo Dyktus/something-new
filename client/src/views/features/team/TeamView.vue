@@ -42,18 +42,11 @@ const passwordForm = reactive({
 })
 
 const submitProfile = () => {
+  mainStore.setUser(profileForm)
 }
 
-const submitPass = async () => {
-  const response = await api.patch('/profile/change-password', {
-    oldPassword: passwordForm.password_current,
-    newPassword: passwordForm.password,
-    repeatPassword: passwordForm.password_confirmation,
-  });
-
-  if (response.ok) {
-    // SHow alert somehow
-  }
+const submitPass = () => {
+  //
 }
 </script>
 
