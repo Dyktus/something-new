@@ -1,0 +1,36 @@
+name: Build & Push Client and Server Images
+
+on:
+  push:
+    branches:
+      - main
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_CLIENT: ghcr.io/${{ github.repository }}-client
+  IMAGE_SERVER: ghcr.io/${{ github.repository }}-server
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v2
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push Client image
+        run: |
+          docker build -t $IMAGE_CLIENT:latest ./client
+          docker push $IMAGE_CLIENT:latest
+
+      - name: Build and push Server image
+        run: |
+          docker build -t $IMAGE_SERVER:latest ./server
+          docker push $IMAGE_SERVER:latest
