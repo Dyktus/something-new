@@ -1,67 +1,95 @@
 <script setup>
-import { mdiForwardburger, mdiBackburger, mdiMenu } from '@mdi/js'
-import { ref } from 'vue'
-import { useRouter } from 'vue-router'
-import menuAside from '@/menuAside.js'
-import menuNavBar from '@/menuNavBar.js'
-import BaseIcon from '@/components/BaseIcon.vue'
-import NavBar from '@/components/NavBar.vue'
-import NavBarItemPlain from '@/components/NavBarItemPlain.vue'
-import AsideMenu from '@/components/AsideMenu.vue'
+import { ref, computed } from 'vue';
+import { useRouter, useRoute } from 'vue-router';
+import { useMainStore } from '@/stores/main';
 
-const layoutAsidePadding = 'xl:pl-60'
+const router = useRouter();
+const route = useRoute();
+const mainStore = useMainStore();
 
-const router = useRouter()
+const userName = ref('Jan Kowalski');
+const userInitials = computed(() => {
+  return userName.value
+    .split(' ')
+    .map(name => name[0])
+    .join('')
+    .toUpperCase();
+});
 
-const isAsideMobileExpanded = ref(false)
-const isAsideLgActive = ref(false)
+// Aktualnie otwarta strona
+const currentPage = computed(() => {
+  const path = route.path;
 
-router.beforeEach(() => {
-  isAsideMobileExpanded.value = false
-  isAsideLgActive.value = false
-})
+  if (path === '/dashboard') return 'Strona główna';
+  if (path === '/dashboard/page1') return 'Page 1';
+  if (path === '/dashboard/page2') return 'Page 2';
+  if (path === '/dashboard/page3') return 'Page 3';
 
-const menuClick = (event, item) => {
-  if (item.isLogout) {
-    //
+  return 'Dashboard';
+});
+
+// Obsługa wylogowania
+const handleLogout = async () => {
+  try {
+    router.push('/logout');
+  } catch (error) {
   }
-}
+};
 </script>
-
 <template>
-  <div
-    :class="{
-      'overflow-hidden lg:overflow-visible': isAsideMobileExpanded,
-    }"
-  >
-    <div
-      :class="[layoutAsidePadding, { 'ml-60 lg:ml-0': isAsideMobileExpanded }]"
-      class="pt-14 min-h-screen w-screen transition-position lg:w-auto bg-gray-50 dark:bg-slate-800 dark:text-slate-100"
-    >
-      <!-- Top menu -->
-<!--      <NavBar-->
-<!--        :menu="menuNavBar"-->
-<!--        :class="[layoutAsidePadding, { 'ml-60 lg:ml-0': isAsideMobileExpanded }]"-->
-<!--        @menu-click="menuClick"-->
-<!--      >-->
-<!--        <NavBarItemPlain-->
-<!--          display="flex lg:hidden"-->
-<!--          @click.prevent="isAsideMobileExpanded = !isAsideMobileExpanded"-->
-<!--        >-->
-<!--          <BaseIcon :path="isAsideMobileExpanded ? mdiBackburger : mdiForwardburger" size="24" />-->
-<!--        </NavBarItemPlain>-->
-<!--        <NavBarItemPlain display="hidden lg:flex xl:hidden" @click.prevent="isAsideLgActive = true">-->
-<!--          <BaseIcon :path="mdiMenu" size="24" />-->
-<!--        </NavBarItemPlain>-->
-<!--      </NavBar>-->
-      <AsideMenu
-        :is-aside-mobile-expanded="isAsideMobileExpanded"
-        :is-aside-lg-active="isAsideLgActive"
-        :menu="menuAside"
-        @menu-click="menuClick"
-        @aside-lg-close-click="isAsideLgActive = false"
-      />
-      <slot />
+  <div class="dashboard-container">
+    <!-- Sidebar / Menu boczne -->
+    <div class="sidebar">
+      <div class="logo-container">
+        <router-link to="/dashboard" class="logo">
+          <span class="logo-icon">🌿</span>
+          <span class="logo-text">SaaSy</span>
+        </router-link>
+      </div>
+
+      <nav class="menu">
+        <router-link to="/" class="menu-item" active-class="active">
+          <span class="menu-icon">🏠</span>
+          <span class="menu-text">Strona główna</span>
+        </router-link>
+
+        <router-link to="/profile" class="menu-item" active-class="active">
+          <span class="menu-icon">👥</span>
+          <span class="menu-text">Profil</span>
+        </router-link>
+
+<!--        <router-link to="/dashboard/page2" class="menu-item" active-class="active">-->
+<!--          <span class="menu-icon">📝</span>-->
+<!--          <span class="menu-text">Page 2</span>-->
+<!--        </router-link>-->
+
+<!--        <router-link to="/dashboard/page3" class="menu-item" active-class="active">-->
+<!--          <span class="menu-icon">👥</span>-->
+<!--          <span class="menu-text">Page 3</span>-->
+<!--        </router-link>-->
+      </nav>
+
+      <div class="logout-container">
+        <button @click="handleLogout" class="logout-button">
+          <span class="logout-icon">🚪</span>
+          <span class="logout-text">Wyloguj</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Main Content / Główna zawartość -->
+    <div class="main-content">
+      <div class="top-bar">
+        <div class="current-page">{{ currentPage }}</div>
+        <div class="user-info">
+          <span class="user-name">{{ userName }}</span>
+          <div class="user-avatar">{{ userInitials }}</div>
+        </div>
+      </div>
+
+      <div class="content-area">
+        <slot/>
+      </div>
     </div>
   </div>
 </template>

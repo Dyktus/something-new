@@ -1,7 +1,7 @@
 services:
   server:
     build:
-      context: .
+      context: ./server
       dockerfile: Dockerfile
     ports:
       - "3000:3000"
@@ -13,12 +13,12 @@ services:
 
   client:
     build:
-      context: .
+      context: ./client
       dockerfile: Dockerfile
     ports:
       - "8000:8000"
     volumes:
-      - .:/server
+      - .:/client
     environment:
       - NODE_ENV=development
     restart: always

@@ -2,9 +2,11 @@ import { createRouter, createWebHashHistory } from 'vue-router'
 import Home from '@/views/HomeView.vue'
 import ProfileView from "@/views/features/user/ProfileView.vue";
 import LoginView from "@/views/features/user/LoginView.vue";
-import RegisterView from "@/views/features/user/RegisterView.vue";
 import LogoutView from "@/views/features/user/LogoutView.vue";
 import TeamView from "@/views/features/team/TeamView.vue";
+import NewRegisterView from "@/views/features/user/NewRegisterView.vue";
+import ForgotPassword from "@/views/features/user/ForgotPassword.vue";
+import ResetPassword from "@/views/features/user/ResetPassword.vue";
 
 const routes = [
   {
@@ -50,7 +52,26 @@ const routes = [
     },
     path: '/register',
     name: 'register',
-    component: RegisterView,
+    component: NewRegisterView,
+  },
+  {
+    meta: {
+      title: 'Forgot password',
+      requiresAuth: false,
+    },
+    path: '/forgot-password',
+    name: 'forgot-password',
+    component: ForgotPassword,
+  },
+
+  {
+    meta: {
+      title: 'Reset password',
+      requiresAuth: false,
+    },
+    path: '/reset-password',
+    name: 'reset-password',
+    component: ResetPassword,
   },
   {
     meta: {
